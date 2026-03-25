@@ -83,6 +83,7 @@ int main() {
     sun_y.push_back(universe[0].getY());
     earth_x.push_back(universe[1].getX());
     earth_y.push_back(universe[1].getY());
+
     for (Pianeta &p : universe) {
       p.reset_force();
     }
