@@ -1,0 +1,22 @@
+# CMake Build directory
+build/
+
+# IDE configurations (Visual Studio, VS Code, CLion)
+.vscode/
+.vs/
+.idea/
+out/
+cmake-build-debug/
+
+# Compilation Artifacts (in case they end up outside build/)
+*.exe
+*.o
+*.obj
+*.pdb
+*.ilk
+*.dll
+*.lib
+
+# OS generated files
+.DS_Store
+Thumbs.db
