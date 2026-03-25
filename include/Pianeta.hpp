@@ -82,7 +82,28 @@ public:
    */
   void update(double dt);
 
-  double getX();
-  double getY();
-  double getZ();
+  /**
+   * @brief Retrieves the X coordinate (Read-Only).
+   * 
+   * The 'const' qualifier at the end of the method signature is known as 
+   * "Const Correctness". It explicitly guarantees to the compiler that calling 
+   * this method will NEVER modify the internal state variables (x, y, z, m) of 
+   * the Pianeta object. Without this, the compiler would prevent us from 
+   * reading coordinates from a 'const Pianeta' reference.
+   * 
+   * @return double The current X coordinate in meters.
+   */
+  double getX() const;
+
+  /**
+   * @brief Retrieves the Y coordinate (Read-Only).
+   * @return double The current Y coordinate in meters.
+   */
+  double getY() const;
+
+  /**
+   * @brief Retrieves the Z coordinate (Read-Only).
+   * @return double The current Z coordinate in meters.
+   */
+  double getZ() const;
 };

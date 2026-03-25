@@ -140,14 +140,77 @@ deep numerical analysis and pivot immediately to Architectural Refactoring.)*
 
 ## 2. Make It Right (Refactoring Phase)
 
-*Status: Pending*
+*Status: Currently in Progress*
 
-Once the physical loop outputs mathematically correct data in the `main`
-function, this phase will focus on pure Software Engineering paradigms. We
-will extract logic into dedicated classes (e.g., `Simulator`, `DataLoader`),
-implement robust error handling (managing mathematical singularities like
-division by zero), and ensure software quality via automated Unit Testing
-execution.
+Once the physical computational loop output mathematically correct data inside
+our monolithic `main` function, this phase pivots entirely towards pure
+Software Engineering paradigms. We abandoned the single-file procedural
+approach to construct a scalable Object-Oriented architecture.
+
+### 2.1 The "Strategy" Design Pattern and Interfaces
+
+To decouple the management of the celestial bodies from the mathematical
+integration logic (which could change from Euler to Verlet or Leapfrog in the
+future), we implemented the **Strategy Pattern**.
+
+In C++, this is achieved via an Interface (an abstract base class with a pure
+virtual function `virtual ... = 0;`).
+
+```cpp
+class IIntegrator {
+public:
+  virtual ~IIntegrator() = default;
+  virtual void doStep(std::vector<Pianeta> &universe, double dt) = 0;
+};
+```
+
+The `EulerIntegrator` class inherits from this interface and fulfills the
+contract by providing the concrete O(N^2) mathematical implementation.
+
+### 2.2 Dependency Injection orchestrating the `SolarSystem`
+
+The universe simulation space is now encapsulated securely within the
+`SolarSystem` class. This class knows absolutely nothing about the underlying
+physics engine. It simply holds a pointer to the abstract `IIntegrator`
+interface:
+
+```cpp
+class SolarSystem {
+private:
+  std::vector<Pianeta> universe;
+  IIntegrator *integrator; // The interchangeable physics engine
+public:
+  SolarSystem(IIntegrator *integrator);
+  void integrate(double dt) { integrator->doStep(universe, dt); }
+};
+```
+
+This is a textbook example of **Dependency Injection** and **Loose Coupling**.
+The orchestrator in `main.cpp` creates the specific engine and injects it:
+`SolarSystem solarSystem(&eulerIntegrator);`
+
+### 2.3 Const Correctness and High-Performance Encapsulation
+
+By making the `universe` array `private`, we successfully shielded the
+planetary data from accidental external manipulation. However, our graphical
+plotter in `main.cpp` requires Read-Access to the coordinates to draw the
+orbit.
+
+To avoid a catastrophic performance drop (copying an entire array of planets
+every discrete step), we exposed the data using a **Constant Reference Getter**:
+
+```cpp
+const std::vector<Pianeta> &getUniverse() const;
+```
+
+1. The `&` symbol ensures we return a memory reference, completely bypassing
+the O(N) copy overhead.
+2. The `const` keywords mathematically guarantee to the C++ compiler that the
+returned data is strictly **Read-Only**.
+
+To legally support this read-only access, the primitive properties of the
+Planets were also academically labeled as constant (e.g., `double getX() const;`),
+achieving complete **Const Correctness** throughout the entire software stack.
 
 ## 3. Make It Fast (Optimization Phase)
 

@@ -4,7 +4,9 @@
 #include <string>
 #include <vector>
 
+#include "EulerIntegrator.hpp"
 #include "Pianeta.hpp"
+#include "SolarSystem.hpp"
 #include <matplotlibcpp.h>
 /**
  * @file main.cpp
@@ -18,11 +20,14 @@ int main() {
   // Open the localized data source file containing planetary ephemerides
   std::ifstream fs("../Data/Earth.txt");
   std::string line;
-  std::vector<Pianeta> universe;
+
+  EulerIntegrator eulerIntegrator;
+  SolarSystem solarSystem(&eulerIntegrator);
 
   Pianeta sun(1.989e30, 0, 0, 0, 0, 0, 0);
+  solarSystem.addPlanet(sun);
   int dt{86400};
-  universe.push_back(sun);
+
   std::vector<double> earth_x, earth_y;
   std::vector<double> sun_x, sun_y;
 
@@ -72,31 +77,20 @@ int main() {
       Pianeta earth(5.973e24, x, y, z, vx, vy, vz);
 
       // Inject the entity into the global simulation spatial domain
-      universe.push_back(earth);
+      solarSystem.addPlanet(earth);
 
       break;
     }
   }
 
   for (int step{0}; step < 365; step++) {
-    sun_x.push_back(universe[0].getX());
-    sun_y.push_back(universe[0].getY());
-    earth_x.push_back(universe[1].getX());
-    earth_y.push_back(universe[1].getY());
+    solarSystem.integrate(dt);
 
-    for (Pianeta &p : universe) {
-      p.reset_force();
-    }
-    for (int i{0}; i < universe.size(); i++) {
-      for (int j{0}; j < universe.size(); j++) {
-        if (j != i) {
-          universe[i].compute_force(universe[j]);
-        }
-      }
-    }
-    for (Pianeta &p : universe) {
-      p.update(dt);
-    }
+    const std::vector<Pianeta> &univ = solarSystem.getUniverse();
+    sun_x.push_back(univ[0].getX());
+    sun_y.push_back(univ[0].getY());
+    earth_x.push_back(univ[1].getX());
+    earth_y.push_back(univ[1].getY());
   }
 
   matplotlibcpp::plot(earth_x, earth_y, "b-");

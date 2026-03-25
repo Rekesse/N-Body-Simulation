@@ -67,8 +67,8 @@ void Pianeta::update(double dt) {
   z += vz * dt;
 }
 
-double Pianeta::getX() { return x; }
+double Pianeta::getX() const { return x; }
 
-double Pianeta::getY() { return y; }
+double Pianeta::getY() const { return y; }
 
-double Pianeta::getZ() { return z; }
+double Pianeta::getZ() const { return z; }

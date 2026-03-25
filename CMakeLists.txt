@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 include_directories(include)
 
 # Crea l'eseguibile compilando il main.cpp
-add_executable(N_Body source/main.cpp source/Pianeta.cpp)
+add_executable(N_Body source/main.cpp source/Pianeta.cpp source/EulerIntegrator.cpp source/SolarSystem.cpp)
 # target_include_directories(N_Body PRIVATE include)
 
 find_package(Python3 COMPONENTS Development NumPy REQUIRED)
