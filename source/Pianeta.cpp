@@ -1,4 +1,5 @@
 #include "Pianeta.hpp"
+#include <array>
 #include <basetsd.h>
 
 /**
@@ -27,9 +28,9 @@ double Pianeta::compute_distance(const Pianeta &other) const {
  * avoiding computationally expensive trigonometric function evaluations.
  */
 void Pianeta::compute_force(const Pianeta &other) {
-  double dx = other.x - x;
-  double dy = other.y - y;
-  double dz = other.z - z;
+  double dx = other.getX() - x;
+  double dy = other.getY() - y;
+  double dz = other.getZ() - z;
   double r = dx * dx + dy * dy + dz * dz;
   double r_sqrt = std::sqrt(r);
   double Ftot = G * m * other.m / r;
@@ -45,30 +46,69 @@ void Pianeta::reset_force() {
   fz = 0;
 }
 
-/**
- * @brief State evaluation using Explicit Euler Integration.
- *
- * Uses Newton's Second Law (F = ma) to derive acceleration, and integrates
- * sequentially to determine the new velocity and positional space vectors.
- * Note: Euler integration is not symplectic and may introduce secular energy
- * drift.
- */
-void Pianeta::update(double dt) {
-  double ax = fx / m;
-  double ay = fy / m;
-  double az = fz / m;
+// --------------------------------------------------------------------------
+// State Vector Accessors
+// --------------------------------------------------------------------------
+// The following getters were introduced to externalize the Euler integration
+// logic from Pianeta into the IIntegrator hierarchy (Strategy Pattern).
+// Pianeta now acts purely as a data entity ("Model"), while the mathematical
+// time-stepping is delegated to the concrete integrator class.
 
-  vx += ax * dt;
-  vy += ay * dt;
-  vz += az * dt;
+double Pianeta::getForceX() const { return fx; }
 
-  x += vx * dt;
-  y += vy * dt;
-  z += vz * dt;
-}
+double Pianeta::getForceY() const { return fy; }
+
+double Pianeta::getForceZ() const { return fz; }
 
 double Pianeta::getX() const { return x; }
 
 double Pianeta::getY() const { return y; }
 
 double Pianeta::getZ() const { return z; }
+
+/**
+ * @brief Velocity vector accessors.
+ *
+ * These are essential for the Explicit Euler accumulation formula:
+ *   v(t+dt) = v(t) + a * dt
+ * Without read access to the current velocity, the integrator would
+ * overwrite (instead of accumulate) the kinematic state.
+ */
+double Pianeta::getVx() const { return vx; }
+
+double Pianeta::getVy() const { return vy; }
+
+double Pianeta::getVz() const { return vz; }
+
+/**
+ * @brief Computes instantaneous acceleration from Newton's Second Law: a = F/m.
+ *
+ * The division is performed on-the-fly (not cached) to guarantee the returned
+ * value always reflects the most recently accumulated force state. This is
+ * critical because forces are reset and recomputed at every discrete time step.
+ */
+double Pianeta::getAccX() const { return fx / m; }
+
+double Pianeta::getAccY() const { return fy / m; }
+
+double Pianeta::getAccZ() const { return fz / m; }
+
+// --------------------------------------------------------------------------
+// State Vector Mutators
+// --------------------------------------------------------------------------
+// These setters allow the IIntegrator to write the newly computed kinematic
+// state back into the Pianeta object after each integration step.
+// The separation of read (getters) and write (setters) enforces a clear
+// data-flow contract: only the active integrator may modify the state.
+
+void Pianeta::setVx(double v_x) { vx = v_x; }
+
+void Pianeta::setVy(double v_y) { vy = v_y; }
+
+void Pianeta::setVz(double v_z) { vz = v_z; }
+
+void Pianeta::setX(double x_pos) { x = x_pos; }
+
+void Pianeta::setY(double y_pos) { y = y_pos; }
+
+void Pianeta::setZ(double z_pos) { z = z_pos; }

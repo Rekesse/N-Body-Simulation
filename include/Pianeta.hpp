@@ -71,26 +71,22 @@ public:
    */
   void reset_force();
 
-  /**
-   * @brief Integrates the equations of motion over a discrete time step.
-   *
-   * Currently implements the Explicit Euler forward numerical integration
-   * method to update the velocity and position state vectors according to the
-   * accumulated forces.
-   *
-   * @param dt The explicit time step delta [s].
-   */
-  void update(double dt);
+  // --- State Vector Accessors (Read-Only) ---
+  // These getters were introduced during the "Make It Right" refactoring phase
+  // to externalize the integration logic from Pianeta into IIntegrator.
+  // By exposing read-only access to the internal state, the Pianeta class
+  // adheres to the Single Responsibility Principle: it models the physical
+  // entity, while the IIntegrator handles the mathematical time-stepping.
 
   /**
    * @brief Retrieves the X coordinate (Read-Only).
-   * 
-   * The 'const' qualifier at the end of the method signature is known as 
-   * "Const Correctness". It explicitly guarantees to the compiler that calling 
-   * this method will NEVER modify the internal state variables (x, y, z, m) of 
-   * the Pianeta object. Without this, the compiler would prevent us from 
+   *
+   * The 'const' qualifier at the end of the method signature is known as
+   * "Const Correctness". It explicitly guarantees to the compiler that calling
+   * this method will NEVER modify the internal state variables (x, y, z, m) of
+   * the Pianeta object. Without this, the compiler would prevent us from
    * reading coordinates from a 'const Pianeta' reference.
-   * 
+   *
    * @return double The current X coordinate in meters.
    */
   double getX() const;
@@ -106,4 +102,88 @@ public:
    * @return double The current Z coordinate in meters.
    */
   double getZ() const;
+
+  /**
+   * @brief Retrieves the X-component of the velocity vector (Read-Only).
+   * @return double The current Vx in meters per second [m/s].
+   */
+  double getVx() const;
+
+  /**
+   * @brief Retrieves the Y-component of the velocity vector (Read-Only).
+   * @return double The current Vy in meters per second [m/s].
+   */
+  double getVy() const;
+
+  /**
+   * @brief Retrieves the Z-component of the velocity vector (Read-Only).
+   * @return double The current Vz in meters per second [m/s].
+   */
+  double getVz() const;
+
+  /**
+   * @brief Retrieves the X-component of the accumulated gravitational force.
+   * @return double The net force Fx in Newtons [N].
+   */
+  double getForceX() const;
+
+  /**
+   * @brief Retrieves the Y-component of the accumulated gravitational force.
+   * @return double The net force Fy in Newtons [N].
+   */
+  double getForceY() const;
+
+  /**
+   * @brief Retrieves the Z-component of the accumulated gravitational force.
+   * @return double The net force Fz in Newtons [N].
+   */
+  double getForceZ() const;
+
+  /**
+   * @brief Computes and returns the instantaneous X-acceleration.
+   *
+   * Derived from Newton's Second Law: a = F/m. This method performs the
+   * division on-the-fly rather than caching the result, ensuring the returned
+   * value always reflects the most recently accumulated force state.
+   *
+   * @return double The acceleration ax in [m/s^2].
+   */
+  double getAccX() const;
+
+  /**
+   * @brief Computes and returns the instantaneous Y-acceleration (a = F/m).
+   * @return double The acceleration ay in [m/s^2].
+   */
+  double getAccY() const;
+
+  /**
+   * @brief Computes and returns the instantaneous Z-acceleration (a = F/m).
+   * @return double The acceleration az in [m/s^2].
+   */
+  double getAccZ() const;
+
+  // --- State Vector Mutators ---
+  // These setters enable the IIntegrator to write the updated kinematic state
+  // back into the Pianeta after computing the numerical integration step.
+  // By using explicit setter methods instead of public member variables, we
+  // preserve encapsulation: the internal representation can change without
+  // affecting external consumers.
+
+  /** @brief Sets the X-component of the velocity vector [m/s]. */
+  void setVx(double v_x);
+
+  /** @brief Sets the Y-component of the velocity vector [m/s]. */
+  void setVy(double v_y);
+
+  /** @brief Sets the Z-component of the velocity vector [m/s]. */
+  void setVz(double v_z);
+
+  /** @brief Sets the X-coordinate of the spatial position [m]. */
+  void setX(double x_pos);
+
+  /** @brief Sets the Y-coordinate of the spatial position [m]. */
+  void setY(double y_pos);
+
+  /** @brief Sets the Z-coordinate of the spatial position [m]. */
+  void setZ(double z_pos);
 };

@@ -212,6 +212,83 @@ To legally support this read-only access, the primitive properties of the
 Planets were also academically labeled as constant (e.g., `double getX() const;`),
 achieving complete **Const Correctness** throughout the entire software stack.
 
+### 2.4 The `Reader` Class: Encapsulating Data Ingestion
+
+During the prototyping phase, the entire CSV parsing logic for the NASA
+Horizons Ephemeris data resided inside `main.cpp` as a raw procedural block.
+This violated the **Single Responsibility Principle**: the entry point was
+simultaneously managing I/O, parsing, unit conversion, and orchestration.
+
+To rectify this, we extracted the data ingestion pipeline into a dedicated
+`Reader` class. Its internal workflow is as follows:
+
+1. **Directory Scanning**: The constructor accepts a filesystem path and
+   leverages `std::filesystem::directory_iterator` (C++17) to discover all
+   data files automatically, without hardcoding filenames.
+2. **Ephemeris Parsing**: The `readData()` method iterates through each
+   discovered file, locates the NASA `$$SOE` (Start Of Ephemeris) marker,
+   and extracts the 6 Cartesian state vector components (X, Y, Z, VX, VY, VZ)
+   using `std::stringstream` tokenization.
+3. **Unit Normalization**: All positional and velocity values are converted
+   from the NASA-native kilometers to SI meters (`* 1000.0`).
+4. **Structured Storage**: The parsed data is stored in a
+   `std::map<std::string, std::array<double, 6>>`, keyed by filename,
+   enabling O(log N) lookup from `main.cpp`.
+
+The getter `getMap()` returns a `const` reference to the internal map,
+maintaining the encapsulation principle established throughout the codebase.
+
+```cpp
+Reader reader("../Data");
+reader.readData();
+auto data_map = reader.getMap();
+// Access: data_map.at("Earth.txt").at(0) → X-coordinate in meters
+```
+
+### 2.5 Externalizing Integration Logic: From `Pianeta` to `EulerIntegrator`
+
+In the initial architecture, the `Pianeta` class contained an `update(double dt)`
+method that performed the Explicit Euler integration internally. While
+functionally correct, this design violated the **Single Responsibility Principle**:
+`Pianeta` was simultaneously modeling a physical entity AND executing mathematical
+integration — two distinct concerns.
+
+**The Refactoring**: The `update()` method was removed from `Pianeta` entirely.
+The integration logic was migrated into `EulerIntegrator::doStep()`, where it
+semantically belongs. To enable this, `Pianeta` was extended with:
+
+- **Velocity Getters** (`getVx()`, `getVy()`, `getVz()`): Essential for the
+  accumulation formula `v(t+dt) = v(t) + a·dt`. Without read access to the
+  current velocity, the integrator would overwrite (instead of accumulate) the
+  kinematic state.
+- **Acceleration Getters** (`getAccX()`, `getAccY()`, `getAccZ()`): Compute
+  `a = F/m` on-the-fly from Newton's Second Law, always reflecting the most
+  recently accumulated force state.
+- **State Setters** (`setVx()`, `setX()`, etc.): Allow the integrator to write
+  the newly computed state back into the entity.
+
+The explicit integration step inside `EulerIntegrator` now reads:
+
+```cpp
+// a = F/m (Newton's Second Law)
+double ax{p.getAccX()};
+
+// v(t+dt) = v(t) + a(t) · dt (Velocity Accumulation)
+double new_vx{p.getVx() + ax * dt};
+
+// x(t+dt) = x(t) + v(t+dt) · dt (Position Accumulation)
+double new_x{p.getX() + new_vx * dt};
+
+p.setVx(new_vx);
+p.setX(new_x);
+```
+
+This refactoring strengthens the **Strategy Pattern**: `Pianeta` is now a pure
+data entity (the "Model"), while all mathematical time-stepping is exclusively
+delegated to the interchangeable `IIntegrator` implementation. A future Velocity
+Verlet integrator could read the same getters but apply a completely different
+integration formula — without modifying a single line in `Pianeta`.
+
 ## 3. Make It Fast (Optimization Phase)
 
 *Status: Pending*
