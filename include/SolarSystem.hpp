@@ -14,7 +14,33 @@
 class SolarSystem {
 private:
   std::vector<Pianeta> universe;
-  IIntegrator *integrator; // Pointer to an abstract interface (Loose Coupling)
+
+  /**
+   * @brief Pointer to the abstract integration strategy (Loose Coupling).
+   *
+   * A pointer (IIntegrator*) is chosen over a reference (IIntegrator&) for
+   * three fundamental reasons in C++ object-oriented design:
+   *
+   * 1. REASSIGNABILITY — A reference, once bound to an object at construction,
+   *    can never be reseated to point elsewhere. A pointer can be reassigned
+   *    at runtime, enabling hot-swapping of integration algorithms (e.g.,
+   *    switching from Euler to Verlet mid-simulation).
+   *
+   * 2. NULLABLE SEMANTICS — A pointer can represent the absence of an object
+   *    (nullptr), which is useful for deferred initialization or error states.
+   *    A reference must always refer to a valid object.
+   *
+   * 3. POLYMORPHISM — The pointer type is the abstract base class IIntegrator*.
+   *    At runtime, the actual object behind the pointer can be any concrete
+   *    derived class (EulerIntegrator, VerletIntegrator, etc.). This is the
+   *    runtime polymorphism mechanism that enables the Strategy Pattern.
+   *
+   * NOTE: In production-grade C++, this raw pointer would be replaced by
+   * std::unique_ptr<IIntegrator> to enforce automatic memory management
+   * (RAII) and make the ownership semantics explicit. In the current design
+   * the integrator is stack-allocated in main(), so no manual delete is needed.
+   */
+  IIntegrator *integrator;
 
 public:
   /**
