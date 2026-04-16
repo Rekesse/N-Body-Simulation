@@ -1,6 +1,6 @@
 #include "Pianeta.hpp"
 #include <array>
-#include <basetsd.h>
+//#include <basetsd.h>
 
 /**
  * @brief Class Constructor. Initializes the dynamic state and zeros the force
