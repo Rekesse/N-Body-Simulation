@@ -1,45 +1,6 @@
 #pragma once 
 
-// NOT GOOD
 
-// struct CoordX{
-//     double value;
-//     explicit CoordX(double x) : value(x) {};
-// };
-
-// struct CoordY{
-//     double value;
-//     explicit CoordY(double y) : value(y) {};
-// };
-
-// struct CoordZ{
-//     double value;
-//     explicit CoordZ(double z) : value(z) {};
-// };
-
-// struct Vector3D
-// {
-//     CoordX x;
-//     CoordY y;
-//     CoordZ z;
-// };
-
-// struct Mass
-// {
-//     double value;
-//     explicit Mass(double m) : value(m) {};
-// };
-
-/*
-
-inside main:
-
-Vector3D p1 = {
-    .x = CoordX(2.3)
-    eccetera
-}
-
-*/
 
 /*
 struct Vector3D{
@@ -104,24 +65,61 @@ Planet terra = {
 template<int m, int d, int t>
 class Units{
     private:
-    double value
+    double m_value;
     public:
-        explicit Units(double val = 0.0) : value(val){}
+        explicit Units(double val = 0.0) : m_value(val){}
 
-        double value() const {return value}
+        double value() const {return m_value;}
+        double& value() {return m_value;}
 
         Units<m,d,t>& operator+=(const Units<m,d,t> &rhs){
-            value += rhs.value;
+            /*
+            Code written within a class’s methods has 
+            unrestricted access to the private members of any instance belonging to that exact same class.
+            */
+            m_value += rhs.m_value;
             return *this;
         }
 
         Units<m,d,t>& operator*=(double rhs){
-            value *= rh
+            m_value *= rhs;
+            return *this;
         }
 };
 
+template<int m, int d, int t> 
+const Units<m,d,t> operator+(const Units<m,d,t>& lhs, const Units<m,d,t>& rhs){
+    // we cant modify lhs and rhs, so we create another temporary class with the same argument as lhs
+    Units<m,d,t> result(lhs);
+    // we can pass as an argument just lhs and not lhs.value() cause of Copy Constructor (?)
+    return result += rhs;
+}
 
+template<int m, int d, int t>
+const Units<m,d,t> operator*(const Units<m,d,t>& lhs, double rhs){
+    Units<m,d,t> results(lhs);
+    return results *= rhs;
+}
 
+template<int m, int d, int t>
+const Units<m,d,t> operator*(double lhs, const Units<m,d,t>& rhs){
+    Units<m,d,t> results(rhs);
+    return results *= lhs;
+}
+
+template<int m1, int d1, int t1, int m2, int d2, int t2>
+const Units<m1+m2,d1+d2,t1+t2> operator*(const Units<m1,d1,t1>& lhs, const Units<m2,d2,t2>& rhs){
+    typedef Units<m1+m2,d1+d2,t1+t2> ResultType;
+    // here im forced to use .value cause we are creatig a new Units
+    return ResultType(lhs.m_value() * rhs.m_value());
+}
+
+template<int m1, int d1, int t1, int m2, int d2, int t2>
+const Units<m1+m2,d1+d2,t1+t2> operator/(const Units<m1,d1,t1>& lhs, const Units<m2,d2,t2>& rhs){
+    typedef Units<m1-m2,d1-d2,t1-t2> ResultType;
+    // here im forced to use .value cause we are creatig a new Units
+    return ResultType(lhs.m_value() / rhs.m_value());
+}
 
 
 
