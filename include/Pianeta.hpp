@@ -5,7 +5,7 @@
  * @brief Universal gravitational constant (G).
  * Expressed in the International System of Units (SI): m^3 * kg^-1 * s^-2.
  */
-const double G = 6.67430e-11;
+// const double G = 6.67430e-11;
 
 /**
  * @class Pianeta

@@ -1,4 +1,4 @@
-#pragma once 
+#pragma once
 #include <Units.hpp>
 #include <Vector3D.hpp>
 
@@ -43,12 +43,14 @@ Vector3D p1 = {
 
 */
 
-using Mass = Units<1,0,0>;
-using Distance = Units<0,1,0>;
-using Speed = Units<0,1,-1>;
-using Acceleration = Units<0,1,-2>;
-using Force = Units<1,1,-2>;
+using Mass = Units<1, 0, 0>;
+using Distance = Units<0, 1, 0>;
+using Speed = Units<0, 1, -1>;
+using Acceleration = Units<0, 1, -2>;
+using Force = Units<1, 1, -2>;
+using GraviConst = Units<-1, 3, -2>;
+using SquaredDistance = Units<0, 2, 0>;
 using Position3D = Vector3D<Distance>;
 using Velocity3D = Vector3D<Speed>;
-
-
+using Acceleration3D = Vector3D<Acceleration>;
+using VForce = Vector3D<Force>;

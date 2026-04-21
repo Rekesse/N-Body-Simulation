@@ -1,6 +1,6 @@
 #include "Pianeta.hpp"
 #include <array>
-//#include <basetsd.h>
+// #include <basetsd.h>
 
 /**
  * @brief Class Constructor. Initializes the dynamic state and zeros the force
@@ -33,11 +33,12 @@ void Pianeta::compute_force(const Pianeta &other) {
   double dz = other.getZ() - z;
   double r = dx * dx + dy * dy + dz * dz;
   double r_sqrt = std::sqrt(r);
-  double Ftot = G * m * other.m / r;
+  /*double Ftot = G * m * other.m / r;
 
   fx += Ftot * (dx / r_sqrt);
   fy += Ftot * (dy / r_sqrt);
   fz += Ftot * (dz / r_sqrt);
+  */
 }
 
 void Pianeta::reset_force() {

@@ -1,13 +1,13 @@
-#include <fstream>
-#include <iostream>
-#include <sstream>
+#include <Planet.hpp>
 #include <string>
 #include <vector>
 
 #include "EulerIntegrator.hpp"
 #include "Pianeta.hpp"
+#include "Planet.hpp"
 #include "Reader.hpp"
 #include "SolarSystem.hpp"
+#include "Types.hpp"
 #include <matplotlibcpp.h>
 /**
  * @file main.cpp
@@ -25,6 +25,8 @@ int main() {
   Reader reader("../Data");
   reader.readData();
   auto data_map = reader.getMap();
+
+  Planet sun_(Mass(1.989e30));
 
   Pianeta sun(1.989e30, 0, 0, 0, 0, 0, 0);
   solarSystem.addPlanet(sun);
