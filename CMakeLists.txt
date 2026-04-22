@@ -9,6 +9,30 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 include_directories(include)
 
 #GTest 
+
+
+# -------------------------------------------------------------------
+# 1. CORE LIBRARY
+# -------------------------------------------------------------------
+add_library(NBody_Core 
+    source/Planet.cpp 
+    source/EulerIntegrator.cpp 
+    source/SolarSystem.cpp 
+    source/Reader.cpp
+)
+
+# -------------------------------------------------------------------
+# 2. THE MAIN EXECUTABLE (The Simulation)
+# -------------------------------------------------------------------
+add_executable(N_Body source/main.cpp)
+
+find_package(Python3 COMPONENTS Development NumPy REQUIRED)
+target_link_libraries(N_Body PRIVATE Python3::NumPy Python3::Python)
+
+# -------------------------------------------------------------------
+# 3. GOOGLE TEST (Fetch e Configuration)
+# -------------------------------------------------------------------
+
 include(FetchContent)
 FetchContent_Declare(
     googletest
@@ -19,23 +43,17 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-# Crea l'eseguibile compilando il main.cpp
-add_executable(N_Body source/main.cpp source/Planet.cpp source/EulerIntegrator.cpp source/SolarSystem.cpp source/Reader.cpp)
-# target_include_directories(N_Body PRIVATE include)
-
-find_package(Python3 COMPONENTS Development NumPy REQUIRED)
-target_link_libraries(N_Body PRIVATE Python3::NumPy Python3::Python)
-
 enable_testing()
 
 add_executable(
-  hello_test
-  hello_test.cc
+  nbody_tests
+  tests/test_physics.cpp
 )
 target_link_libraries(
-  hello_test
+  nbody_tests
+  PRIVATE NBody_Core
   GTest::gtest_main
 )
 
 include(GoogleTest)
-gtest_discover_tests(hello_test)
+gtest_discover_tests(nbody_tests)
