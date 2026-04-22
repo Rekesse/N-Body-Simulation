@@ -1,7 +1,7 @@
 #pragma once
 
-#include "IIntegrator.hpp"
-#include "Pianeta.hpp"
+#include <IIntegrator.hpp>
+#include <Planet.hpp>
 #include <vector>
 
 /**
@@ -20,5 +20,5 @@ public:
    * compiler that we intend to override the virtual function from the base class.
    * If the base class signature changes, the compiler will catch the mismatch here.
    */
-  void doStep(std::vector<Pianeta> &universe, double dt) override;
+  void doStep(std::vector<Planet> &universe, double dt) override;
 };

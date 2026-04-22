@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Pianeta.hpp"
+#include <Planet.hpp>
 #include <vector>
 
 /**
@@ -31,5 +31,5 @@ public:
    * The "= 0" syntax declares this as a "Pure Virtual Function", forcing derived
    * classes to provide the concrete implementation.
    */
-  virtual void doStep(std::vector<Pianeta> &universe, double dt) = 0;
+  virtual void doStep(std::vector<Planet> &universe, double dt) = 0;
 };

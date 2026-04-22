@@ -13,6 +13,6 @@ void Planet::compute_force(const Planet &other) {
   force = delta_pos * Ftot / d;
 }
 
-void Planet::reset_force() { force = force * 0; }
+void Planet::reset_force() { force = force * 0.0; }
 
 Acceleration3D Planet::get_acc() const { return force / m; }

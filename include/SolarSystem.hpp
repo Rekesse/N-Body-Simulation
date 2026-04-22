@@ -1,8 +1,11 @@
 #pragma once
 
-#include "IIntegrator.hpp"
-#include "Pianeta.hpp"
+#include <IIntegrator.hpp>
+#include <Planet.hpp>
 #include <vector>
+#include <iostream>
+#include <map>
+#include <array>
 
 /**
  * @brief The computational domain orchestrator.
@@ -11,9 +14,9 @@
  * of the planets (universe vector) and utilizes Dependency Injection to delegate
  * mathematical calculations to an interchangeable IIntegrator.
  */
-class SolarSystem {
-private:
-  std::vector<Pianeta> universe;
+
+struct SolarSystem {
+  std::vector<Planet> universe;
 
   /**
    * @brief Pointer to the abstract integration strategy (Loose Coupling).
@@ -41,18 +44,18 @@ private:
    * the integrator is stack-allocated in main(), so no manual delete is needed.
    */
   IIntegrator *integrator;
-
-public:
   /**
    * @brief Constructs a new Solar System with a specific physics engine.
    * @param integrator Pointer to the chosen integration algorithm.
    */
-  SolarSystem(IIntegrator *integrator);
+  SolarSystem(IIntegrator *integrator,
+  const std::map<std::string,std::array<double,6>>& dataMapp,
+  const std::map<std::string, double>& massDatabase);
 
   /**
    * @brief Injects a celestial body into the simulation space.
    */
-  void addPlanet(const Pianeta &planet);
+  void addPlanet(const Planet &planet);
 
   /**
    * @brief Advances the entire universe forward by one dt step.
@@ -66,5 +69,5 @@ public:
    * read access without copying memory, while enforcing strict encapsulation
    * (the caller cannot modify or delete the planets).
    */
-  const std::vector<Pianeta> &getUniverse() const;
+  const std::vector<Planet> &getUniverse() const;
 };

@@ -9,6 +9,8 @@
 #include "SolarSystem.hpp"
 #include "Types.hpp"
 #include <matplotlibcpp.h>
+
+
 /**
  * @file main.cpp
  * @brief Entry point for the N-Body Simulation formulation.
@@ -20,21 +22,25 @@
 int main() {
 
   EulerIntegrator eulerIntegrator;
-  SolarSystem solarSystem(&eulerIntegrator);
-
+  
   Reader reader("../Data");
   reader.readData();
-  auto data_map = reader.getMap();
+  const auto& data_map = reader.getMap();
+  std::map<std::string, double> massDatabase = {
+    {"Earth.txt",5.972e24}
+  };
+  
+  SolarSystem solarSystem(&eulerIntegrator, data_map, massDatabase);
 
-  Planet sun_(Mass(1.989e30));
+  // Planet sun(Mass(1.989e30));
+  // solarSystem.addPlanet(sun);
 
-  Pianeta sun(1.989e30, 0, 0, 0, 0, 0, 0);
-  solarSystem.addPlanet(sun);
-  Pianeta earth(5.972e24, data_map.at("Earth.txt").at(0),
-                data_map.at("Earth.txt").at(1), data_map.at("Earth.txt").at(2),
-                data_map.at("Earth.txt").at(3), data_map.at("Earth.txt").at(4),
-                data_map.at("Earth.txt").at(5));
-  solarSystem.addPlanet(earth);
+  // Pianeta sun(1.989e30, 0, 0, 0, 0, 0, 0);
+  // Planet earth(Mass(5.972e24), earth_data.at(0),
+  //               data_map.at("Earth.txt").at(1), data_map.at("Earth.txt").at(2),
+  //               data_map.at("Earth.txt").at(3), data_map.at("Earth.txt").at(4),
+  //               data_map.at("Earth.txt").at(5));
+  // solarSystem.addPlanet(earth);
   int dt{86400};
 
   std::vector<double> earth_x, earth_y;
