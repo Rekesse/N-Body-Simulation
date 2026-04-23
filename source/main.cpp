@@ -8,7 +8,7 @@
 #include "Reader.hpp"
 #include "SolarSystem.hpp"
 #include "Types.hpp"
-#include <matplotlibcpp.h>
+//#include <matplotlibcpp.h>
 
 
 /**
@@ -41,25 +41,24 @@ int main() {
   //               data_map.at("Earth.txt").at(3), data_map.at("Earth.txt").at(4),
   //               data_map.at("Earth.txt").at(5));
   // solarSystem.addPlanet(earth);
-  int dt{86400};
+  Time t(86400);
 
-  std::vector<double> earth_x, earth_y;
-  std::vector<double> sun_x, sun_y;
+  std::vector<Position3D> earth_coord;
+  std::vector<Position3D> sun_coord;
 
   for (int step{0}; step < 365; step++) {
-    solarSystem.integrate(dt);
+    solarSystem.integrate(t);
 
-    const std::vector<Pianeta> &univ = solarSystem.getUniverse();
-    sun_x.push_back(univ[0].getX());
-    sun_y.push_back(univ[0].getY());
-    earth_x.push_back(univ[1].getX());
-    earth_y.push_back(univ[1].getY());
+    //const std::vector<Planet> &univ = solarSystem.getUniverse();
+
+    sun_coord.push_back(solarSystem.getUniverse()[0].pos);
+    earth_coord.push_back(solarSystem.getUniverse()[1].pos);
   }
 
-  matplotlibcpp::plot(earth_x, earth_y, "b-");
-  matplotlibcpp::plot(sun_x, sun_y, "yo");
+  // matplotlibcpp::plot(earth_x, earth_y, "b-");
+  // matplotlibcpp::plot(sun_x, sun_y, "yo");
 
-  matplotlibcpp::show();
+  // matplotlibcpp::show();
 
   return 0;
 }

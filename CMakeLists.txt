@@ -22,12 +22,12 @@ add_library(NBody_Core
 )
 
 # -------------------------------------------------------------------
-# 2. THE MAIN EXECUTABLE (The Simulation)
+# 2. THE MAIN EXECUTABLE 
 # -------------------------------------------------------------------
 add_executable(N_Body source/main.cpp)
 
 find_package(Python3 COMPONENTS Development NumPy REQUIRED)
-target_link_libraries(N_Body PRIVATE Python3::NumPy Python3::Python)
+target_link_libraries(N_Body PRIVATE NBody_Core Python3::NumPy Python3::Python)
 
 # -------------------------------------------------------------------
 # 3. GOOGLE TEST (Fetch e Configuration)
@@ -47,7 +47,7 @@ enable_testing()
 
 add_executable(
   nbody_tests
-  tests/test_physics.cpp
+  tests/test_solarsystem.cpp
 )
 target_link_libraries(
   nbody_tests

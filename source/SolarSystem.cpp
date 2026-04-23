@@ -36,7 +36,7 @@ void SolarSystem::addPlanet(const Planet &planet) {
 }
 
 // Delegation: The SolarSystem does no math itself; it commands the active integrator.
-void SolarSystem::integrate(double dt) { 
+void SolarSystem::integrate(Time dt) { 
   integrator->doStep(universe, dt); 
 }
 

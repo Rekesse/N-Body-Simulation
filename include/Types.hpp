@@ -43,6 +43,7 @@ Vector3D p1 = {
 
 */
 
+using Time = Units<0, 0, 1>;
 using Mass = Units<1, 0, 0>;
 using Distance = Units<0, 1, 0>;
 using Speed = Units<0, 1, -1>;

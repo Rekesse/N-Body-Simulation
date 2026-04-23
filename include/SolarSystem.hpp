@@ -60,7 +60,7 @@ struct SolarSystem {
   /**
    * @brief Advances the entire universe forward by one dt step.
    */
-  void integrate(double dt);
+  void integrate(Time dt);
 
   /**
    * @brief Provides read-only access to the planetary coordinate vectors.
