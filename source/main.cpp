@@ -23,7 +23,7 @@ int main() {
 
   EulerIntegrator eulerIntegrator;
   
-  Reader reader("../Data");
+  Reader reader("../data");
   reader.readData();
   const auto& data_map = reader.getMap();
   std::map<std::string, double> massDatabase = {
