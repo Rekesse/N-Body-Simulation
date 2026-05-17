@@ -32,15 +32,6 @@ int main() {
   
   SolarSystem solarSystem(&eulerIntegrator, data_map, massDatabase);
 
-  // Planet sun(Mass(1.989e30));
-  // solarSystem.addPlanet(sun);
-
-  // Pianeta sun(1.989e30, 0, 0, 0, 0, 0, 0);
-  // Planet earth(Mass(5.972e24), earth_data.at(0),
-  //               data_map.at("Earth.txt").at(1), data_map.at("Earth.txt").at(2),
-  //               data_map.at("Earth.txt").at(3), data_map.at("Earth.txt").at(4),
-  //               data_map.at("Earth.txt").at(5));
-  // solarSystem.addPlanet(earth);
   Time t(86400);
 
   std::vector<Position3D> earth_coord;

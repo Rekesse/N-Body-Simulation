@@ -48,6 +48,7 @@ enable_testing()
 add_executable(
   nbody_tests
   tests/test_solarsystem.cpp
+  tests/test_reader.cpp
 )
 target_link_libraries(
   nbody_tests
